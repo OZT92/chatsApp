@@ -40,6 +40,12 @@ export const getMessages = async (req, res) => {
 export const sendMessage = async (req, res) => {
   try {
     const { text, image } = req.body;
+    if (text && typeof text !== 'string') {
+      return res.status(400).json({ error: "Invalid text" });
+    }
+    if (image && typeof image !== 'string') {
+      return res.status(400).json({ error: "Invalid image" });
+    }
     const { id: receiverId } = req.params;
     const senderId = req.user._id;
 

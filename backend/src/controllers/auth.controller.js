@@ -13,6 +13,9 @@ export const signup = async (req, res) => {
         .status(400)
         .json({ message: "Password must be at least 6 characters" });
     }
+    if (typeof email !== 'string' || typeof password !== 'string' || typeof fullName !== 'string') {
+      return res.status(400).json({ message: "Invalid input" });
+    }
     const user = await User.findOne({ email });
 
     if (user) return res.status(400).json({ message: "Email already exist" });
@@ -49,6 +52,9 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
   const { email, password } = req.body;
   try {
+    if (typeof email !== 'string' || typeof password !== 'string') {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
     const user = await User.findOne({ email });
 
     if (!user) {
@@ -86,6 +92,9 @@ export const logout = (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     const { profilePic } = req.body;
+    if (typeof profilePic !== 'string') {
+      return res.status(400).json({ message: "Invalid profile pic" });
+    }
     const userId = req.user._id;
 
     if (!profilePic) {
@@ -99,7 +108,7 @@ export const updateProfile = async (req, res) => {
         profilePic: uploadResponse.secure_url,
       },
       { new: true }
-    );
+    ).select("-password");
 
     res.status(200).json(updatedUser);
   } catch (error) {
